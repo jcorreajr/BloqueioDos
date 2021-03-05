@@ -1,5 +1,5 @@
-# Analise de conexões DOS
-## Analisa conexões não relatadas e bane ips utilizando fail2ban
+# Análise de conexões DOS
+## Simples analista de conexões não relatadas. Bane ips utilizando fail2ban
 
 Tabela de conteúdos
 =================
@@ -14,23 +14,67 @@ Script que monitora através da resposta do comando netstat/ss, quais IPs estão
 o servidor, na porta pré-configurada 80;443 bloqueando ips com conexões *não estabelecidas* acima do limite estabelecido.
 
 ### Pré-requisitos
-Instalar e configurar fail2ban
+* Instalar e configurar fail2ban:
 ```bash
 # apt install fail2ban
 ```
-. Criar jail.local
-. Configurar novo jail
-. Associar novo filtro ao jail
-. Configurar envio de email
+* Criar jail.local:
+```bash
+# cp /etc/fail2ban/fail2ban.conf /etc/fail2ban/fail2ban.local
+```
+
+* Configurar novo jail:
+```bash
+# vim /etc/fail2ban/jail.d/banmanual.conf
+Conteúdo de exemplo:
+---
+[banmanual]
+enabled = true
+filter = banmanual
+logpath = /var/log/banmanual.log
+maxretry = 1
+port = 80,443
+bantime = 5m
+action = %(action_mwl)s
+---
+```
+
+* Associar novo filtro ao jail:
+```bash
+# vim /etc/fail2ban/filter.d/banmanual.conf
+Conteúdo de exemplo:
+---
+[Definition]
+failregex = ^\[\w{1,3}.\w{1,3}.\d{1,2}.\d{1,2}:\d{1,2}:\d{1,2} \d{1,4}. \[error] \[client.<HOST>].File does not exist:.{1,40}roundcube.{1,200}
+ignoreregex =
+---
+. Adicionar arquivo de log vazio
+# touch /var/log/banmanual.log
+```
+
+* Configurar envio de email:
+```bash
+# vim /etc/fail2ban/fail2ban.local
+
+```
+
+* Analisar se outros jails ficaram ativos e reiniciar serviço:
+```bash
+# systemctl enable fail2ban #Para CentOs 
+# systemctl restart fail2ban
+# systemctl status fail2ban 
+# fail2ban-client status
+```
+
 
 ### Comandos Úteis
 #### Arquivos de configuração:
- /root/scripts/conta_cnx_apache.sh → Variáveis de limite de conexão [limite]
- /root/scripts/ipsliberados.txt → Lista de IPs que não serão bloqueados
+* /root/scripts/conta_cnx_apache.sh → Variáveis de limite de conexão [limite]
+* /root/scripts/ipsliberados.txt → Lista de IPs que não serão bloqueados
 
 #### logs
-/root/scripts/conexao_apache.log → Mostra todas as operações do dia
-/var/log/fail2ban.log → Mostra IPs que foram banidos e que foram liberados
+* /root/scripts/conexao_apache.log → Mostra todas as operações do dia
+* /var/log/fail2ban.log → Mostra IPs que foram banidos e que foram liberados
 
 #### comandos monitoramento fail2ban
 ```bash
