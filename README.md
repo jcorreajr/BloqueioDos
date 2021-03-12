@@ -69,8 +69,18 @@ ignoreregex =
 
 ### Comandos Úteis
 #### Arquivos de configuração:
-* /root/scripts/conta_cnx_apache.sh → Variáveis de limite de conexão [limite]
-* /root/scripts/ipsliberados.txt → Lista de IPs que não serão bloqueados
+```bash
+* /root/scripts/conta_cnx_apache.sh
+
+ → Variáveis de limite de conexão [limite]
+```
+
+```bash
+* /root/scripts/ipsliberados.txt
+
+→ Lista de IPs que não serão bloqueados
+→ Adicionar o próprio IP do servidor neste arquivo
+```
 
 #### logs
 * /root/scripts/conexao_apache.log → Mostra todas as operações do dia
